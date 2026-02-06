@@ -1,48 +1,54 @@
 Schwab API Integration - Implementation Summary
 ===============================================
 
-Files Created
--------------
+Files
+-----
 
-| File                  | Purpose                                                    |
-|-----------------------|------------------------------------------------------------|
+| File                  | Purpose                                                     |
+|-----------------------|-------------------------------------------------------------|
 | server/server.js      | Express server with OAuth2 authentication and API routes   |
+| server/frontend.html  | React frontend served at /app                               |
 | server/package.json   | Node.js dependencies (express, axios, dotenv, cors, selfsigned) |
-| server/.env.example   | Template for Schwab API credentials                        |
-| .gitignore            | Excludes sensitive files (tokens.json, .env, node_modules) |
-
-Files Modified
---------------
-
-| File                       | Changes                                              |
-|----------------------------|------------------------------------------------------|
-| Simple_FrontEnd_React.html | Added auth UI, API integration, live/demo badges     |
+| server/.env.example   | Template for Schwab API credentials                         |
+| server/deploy.sh      | EC2 provisioning and deployment script                      |
+| server/setup-ec2.sh   | Remote setup script (runs on EC2 instance)                  |
+| .gitignore            | Excludes sensitive files (tokens.json, .env, *.pem)         |
 
 
-Key Features Implemented
-------------------------
+Key Features
+------------
 
 Backend (server/server.js):
 - OAuth2 flow: /auth/login, /callback, /auth/status, /auth/logout
 - Market Data routes: /api/quote/:symbol, /api/options/:symbol
 - Auto token refresh before expiration
 - Self-signed HTTPS certificate generation
-- CORS configuration for localhost
+- CORS configuration for localhost and EC2
 
-Frontend:
+Frontend (server/frontend.html):
+- Served at https://<server>/app
 - Authentication status bar with login/logout buttons
 - Polls for auth completion after login popup
 - Fetches real quotes and options chains when authenticated
 - Falls back to calculated demo data when not authenticated
 - Displays "LIVE" or "DEMO" badges on data
 - Shows Delta and IV columns for real options data
-- Graceful error handling with user messages
 
 
-Setup Instructions
-------------------
+Live Deployment
+---------------
 
-1. Create Schwab Developer Account (if not done):
+The app is deployed on AWS EC2 at:
+- Frontend: https://54.227.20.9:5000/app
+- API: https://54.227.20.9:5000
+
+Schwab callback URL: https://54.227.20.9:5000/callback
+
+
+Local Development Setup
+-----------------------
+
+1. Create Schwab Developer Account:
    - Go to https://developer.schwab.com
    - Create an app with "Market Data Production" API
    - Set callback URL to: https://127.0.0.1:5000/callback
@@ -61,11 +67,30 @@ Setup Instructions
    npm install
    npm start
 
-4. Use the App:
-   - Open Simple_FrontEnd_React.html in your browser
-   - Click "Login to Schwab" button in the top-right
-   - Complete OAuth authentication in the popup
-   - Search for a stock symbol (e.g., AAPL) to see real-time data
+4. Open https://127.0.0.1:5000/app in your browser
+
+
+EC2 Deployment
+--------------
+
+Prerequisites:
+- AWS CLI installed and configured (aws configure)
+- Schwab credentials in server/.env
+
+Deploy:
+   cd server
+   ./deploy.sh
+
+The script will:
+- Create an EC2 key pair and security group
+- Launch a t2.micro Ubuntu instance (free-tier)
+- Upload and configure the server
+- Start the server with pm2
+
+After deployment:
+1. Update Schwab developer portal callback URL to the EC2 IP
+2. Visit https://<EC2_IP>:5000 and accept the self-signed certificate
+3. Access the app at https://<EC2_IP>:5000/app
 
 
 API Endpoints
@@ -73,12 +98,14 @@ API Endpoints
 
 | Route               | Method | Purpose                    |
 |---------------------|--------|----------------------------|
+| /app                | GET    | Serve frontend             |
 | /auth/login         | GET    | Redirect to Schwab login   |
 | /callback           | GET    | Handle OAuth callback      |
 | /auth/status        | GET    | Check authentication status|
 | /auth/logout        | POST   | Clear stored tokens        |
 | /api/quote/:symbol  | GET    | Get stock quote            |
 | /api/options/:symbol| GET    | Get options chain          |
+| /health             | GET    | Health check               |
 
 
 Token Management
@@ -89,28 +116,20 @@ Token Management
 - Tokens stored in server/tokens.json (gitignored)
 
 
-Rate Limits
------------
-
-- Schwab API: ~120 requests/minute
-- App makes 2 requests per search (quote + options chain)
-
-
 Troubleshooting
 ---------------
 
-1. "Server offline" message:
-   - Make sure the server is running (npm start)
-   - Check that you're accessing via HTTPS
-
-2. Browser certificate warning:
+1. Browser certificate warning:
    - The server uses a self-signed certificate
    - Click "Advanced" > "Proceed" to accept it
 
-3. OAuth errors:
-   - Verify your callback URL matches exactly
-   - Check that your app is approved on Schwab Developer Portal
+2. OAuth errors:
+   - Verify your callback URL matches exactly in Schwab portal
+   - Check that your app is approved
 
-4. API errors after login:
-   - Tokens may have expired - try logging out and back in
-   - Check server console for detailed error messages
+3. SSH key permission error (WSL):
+   - Key must be in ~/.ssh/ (not on /mnt/c/)
+   - deploy.sh handles this automatically
+
+4. View server logs on EC2:
+   ssh -i ~/.ssh/schwab-api-server-key.pem ubuntu@54.227.20.9 'pm2 logs'
