@@ -318,20 +318,16 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th colSpan="4" style={{ color: '#10b981', borderRight: '1px solid rgba(255,255,255,0.1)' }}>CALLS</th>
+                                    <th colSpan="2" style={{ color: '#10b981', borderRight: '1px solid rgba(255,255,255,0.1)' }}>CALLS</th>
                                     <th style={{ borderLeft: '1px solid rgba(255,255,255,0.1)', borderRight: '1px solid rgba(255,255,255,0.1)' }}>STRIKE</th>
-                                    <th colSpan="4" style={{ color: '#ef4444', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>PUTS</th>
+                                    <th colSpan="2" style={{ color: '#ef4444', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>PUTS</th>
                                 </tr>
                                 <tr style={{ background: 'rgba(255,255,255,0.02)' }}>
                                     <th style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: '500' }}>Bid</th>
-                                    <th style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: '500' }}>Ask</th>
-                                    <th style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: '500' }}>Delta</th>
-                                    <th style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: '500', borderRight: '1px solid rgba(255,255,255,0.1)' }}>IV</th>
+                                    <th style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: '500', borderRight: '1px solid rgba(255,255,255,0.1)' }}>Ask</th>
                                     <th style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: '500', borderLeft: '1px solid rgba(255,255,255,0.1)', borderRight: '1px solid rgba(255,255,255,0.1)' }}>Price</th>
                                     <th style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: '500', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>Bid</th>
                                     <th style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: '500' }}>Ask</th>
-                                    <th style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: '500' }}>Delta</th>
-                                    <th style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: '500' }}>IV</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -347,14 +343,8 @@
                                             <td style={{ color: callITM ? '#10b981' : '#6b7280' }}>
                                                 ${(call.bid || 0).toFixed(2)}
                                             </td>
-                                            <td style={{ color: callITM ? '#10b981' : '#6b7280' }}>
+                                            <td style={{ color: callITM ? '#10b981' : '#6b7280', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
                                                 ${(call.ask || 0).toFixed(2)}
-                                            </td>
-                                            <td style={{ color: '#9ca3af', fontSize: '0.75rem' }}>
-                                                {call.delta ? call.delta.toFixed(2) : '-'}
-                                            </td>
-                                            <td style={{ color: '#9ca3af', fontSize: '0.75rem', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
-                                                {call.volatility ? (call.volatility * 100).toFixed(1) + '%' : '-'}
                                             </td>
                                             <td style={{ fontWeight: isATM ? '700' : '500', borderLeft: '1px solid rgba(255,255,255,0.1)', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
                                                 ${strike.toFixed(2)}
@@ -364,12 +354,6 @@
                                             </td>
                                             <td style={{ color: putITM ? '#ef4444' : '#6b7280' }}>
                                                 ${(put.ask || 0).toFixed(2)}
-                                            </td>
-                                            <td style={{ color: '#9ca3af', fontSize: '0.75rem' }}>
-                                                {put.delta ? put.delta.toFixed(2) : '-'}
-                                            </td>
-                                            <td style={{ color: '#9ca3af', fontSize: '0.75rem' }}>
-                                                {put.volatility ? (put.volatility * 100).toFixed(1) + '%' : '-'}
                                             </td>
                                         </tr>
                                     );
