@@ -180,9 +180,8 @@
         const { useState, useEffect, useRef } = React;
 
         // API Configuration
-        // For local development: 'https://127.0.0.1:5000'
-        // For EC2 deployment:    'https://<EC2_PUBLIC_IP>:5000'  (update after running deploy.sh)
-        const API_BASE = 'https://54.227.20.9:5000';
+        // Served from the same origin as the API server, so use empty string
+        const API_BASE = '';
 
         const futuresSymbols = ['ES', 'NQ', 'YM', 'RTY', 'CL', 'GC', 'SI', 'NG', 'ZB', 'ZN', 'ZC', 'ZS', 'ZW'];
 

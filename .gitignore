@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Environment variables (contains secrets)
+.env
+server/.env
+
+# OAuth tokens (sensitive)
+server/tokens.json
+tokens.json
+
+# Self-signed certificates
+server/cert.pem
+server/key.pem
+*.pem
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Deployment info (contains instance-specific data)
+server/deploy-info.txt
